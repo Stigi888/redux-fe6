@@ -1,13 +1,30 @@
 import React from 'react';
 import './App.css';
 import Dashboard from "./Dashboard";
+import {connect} from "react-redux";
+import TodoCreate from "./TodoCreate";
 
-function App() {
+function App(props) {
+
+
     return (
         <div className="App">
-            <Dashboard/>
+            <TodoCreate/>
+            {props.todos.map((el, i) => <Dashboard
+                index={i}
+                todo={el}
+                key={el.id}
+                lengthTodo={props.todos.length}
+                />)}
+
         </div>
     );
 }
 
-export default App;
+const mapStateToProps = (state) => ({
+    todos: state.todos,
+
+});
+
+
+export default connect(mapStateToProps)(App);

@@ -1,25 +1,24 @@
 const initialState = {
     todos: [
         {
-            title: 'First todo',
-            done: true,
-            id: 1
+            name: 'First todo',
+            done: false,
+            id: 1,
+
         }, {
-            title: 'Second todo',
+            name: 'Second todo',
             done: false,
             id: 2
         }, {
-            title: '3 todo',
+            name: 'Third todo',
             done: false,
             id: 3
         }, {
-            title: '4 todo',
+            name: 'Forth todo',
             done: false,
             id: 4
         }
     ],
-
-    columns: [{id: 1, name: 'qwe'}]
 };
 
 const todo = (state = initialState, action) => {
@@ -28,20 +27,65 @@ const todo = (state = initialState, action) => {
         case 'TODO_ADD':
             return {
                 ...state,
-                todos: [...state.todos, {title: action.payload, done: false, id: Math.random()}]
+                todos: [...state.todos, {name: action.payload, done: false, id: Math.random()}]
             };
 
         case 'DELETE_TODO':
-            const newTodos = state.todos.filter(el => el.id !== action.payload)
+            return {
+                ...state,
+                todos:  [...state.todos.filter(el => el.id !== action.payload)]
+            };
+
+        case 'EDIT_TODO':
+            return {
+                ...state,
+                todos: [...state.todos.map(el => {
+                    if (el.id === action.payload.todoId) {
+                        el.name = action.payload.name
+                    }
+                    return el
+                })]
+            }
+
+        case 'MARK_AS_DONE':
+                return {
+                    ...state,
+                    todos: [...state.todos.map(el => {
+                        if (el.id === action.payload) {
+                            el.done = !el.done
+                        }
+                        return el
+                    })]
+                };
+
+
+        case "MOVE_UP":
+            let upList = [...state.todos]
+            const currentEl = upList[action.payload]
+            const previousEl = upList[action.payload - 1]
+            upList[action.payload] = previousEl;
+            upList[action.payload - 1] = currentEl;
 
             return {
                 ...state,
-                todos: newTodos
+                todos: [...upList]
             };
 
-        default:
-            return state;
-    }
-};
 
-export default todo;
+        case "MOVE_DOWN":
+            let downList = [...state.todos]
+            const currentElementDown = downList[action.payload]
+            const previousElementDown = downList[action.payload + 1]
+            downList[action.payload] = previousElementDown;
+            downList[action.payload + 1] = currentElementDown;
+
+            return {
+                ...state,
+                todos: [...downList]
+            };
+        default:
+            return state
+    }
+}
+
+    export default todo;
