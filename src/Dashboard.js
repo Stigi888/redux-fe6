@@ -1,6 +1,9 @@
 import React, {useState} from 'react';
 import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css'
 import {connect} from "react-redux";
+import {deleteTodo, editTodo, getTodos, markTodoDone} from "./redux/action";
+
 
 
 function Dashboard(props) {
@@ -9,30 +12,27 @@ function Dashboard(props) {
 
     const isToDoDone = todo.done
     const toDoName = todo.name
-    const todoId = todo.id
+    const todoId = todo._id
+    const toDoDescription = todo.description
 
 
     const [isEditMode, setIsEditMode] = useState(false)
     const [newToDo, setNewToDo] = useState(toDoName)
+    const [newDescription, setNewDescription] = useState(toDoDescription)
 
 
-    const inputHandler = (e) => {
-        setNewToDo(e.target.value)
-    }
 
-    const saveButtonHandler = (todoId) => {
+     const saveButtonHandler = (todoId) => {
         props.editToDo(todoId, newToDo)
         setIsEditMode(false)
         setNewToDo(newToDo)
     }
-
-    const remove = (todoId) => {
-        props.deleteTodo(todoId)
+    const saveButtonHandlerDescription = (todoId) => {
+        props.editToDo(todoId, newDescription)
+        setIsEditMode(false)
+        setNewDescription(newDescription)
     }
 
-    const markAsDone = (todoId)=>{
-        props.markAsDone(todoId)
-    }
     const moveDownButton = (index) => {
         props.moveDown(index)
     }
@@ -52,41 +52,43 @@ function Dashboard(props) {
                     {isEditMode ?
                         (
                             <>
-                                <input value={newToDo} onChange={inputHandler}/>
+                                <input value={newToDo} onChange={(e) =>{setNewToDo(e.target.value)}}/>
                                 <button onClick={() => saveButtonHandler(todoId)}>Save</button>
+                                <input value={newDescription} onChange={(e) =>{setNewDescription(e.target.value)}}/>
+                                <button onClick={() => saveButtonHandlerDescription(todoId)}>Save</button>
                             </>
                         )
                         :
                         (<>
                                 {newToDo}
-                                <button onClick={() => markAsDone(todoId)}>{isEditMode ? 'Undone' : 'Done'}</button>
+                                {newDescription}
+                                <button onClick={() => props.markAsDone(todoId)}>{isToDoDone ? 'Undone' : 'Done'}</button>
                                 <button onClick={() => setIsEditMode(true)}>Edit</button>
-                                <button onClick={() => remove(todoId)}>X</button>
+                                <button onClick={() => props.removeTodo(todoId)}>X</button>
                                 <button onClick={() => moveUpButton(index)} disabled={index === 0}>Move UP</button>
                                 <button onClick={() => moveDownButton(index)} disabled={index === lengthTodo-1 }>Move DOWN</button>
                             </>
                         )
                     }
-
-
                 </li>
             </ul>
         </div>
     );
 }
-
+const mapStateToProps = (state) => ({
+    todos: state.todos
+});
 
 const mapDispatchToProps = (dispatch) => ({
 
-deleteTodo: (todoId) => dispatch({type: 'DELETE_TODO', payload: todoId}),
-editToDo: (todoId, newTitle) => dispatch({type: 'EDIT_TODO', payload: {todoId, newTitle}}),
-markAsDone: (todoId) => dispatch({type: 'MARK_AS_DONE', payload: todoId }),
+removeTodo: (todoId) => dispatch(deleteTodo(todoId)),
+editToDo: (todoId, newTitle) => dispatch(editTodo(todoId, newTitle)),
+markAsDone: (todoId) => dispatch(markTodoDone(todoId)),
 moveDown:(index) => dispatch({type: "MOVE_DOWN", payload: index}),
-moveUp:(index) => dispatch({type: "MOVE_UP", payload: index})
-});
+moveUp:(index) => dispatch({type: "MOVE_UP", payload: index}),
 
-const mapStateToProps = (state) => ({
-    todos: state.todos
+
+    getList: () => dispatch(getTodos())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);

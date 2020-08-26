@@ -1,62 +1,68 @@
 const initialState = {
     todos: [
-        {
-            name: 'First todo',
-            done: false,
-            id: 1,
-
-        }, {
-            name: 'Second todo',
-            done: false,
-            id: 2
-        }, {
-            name: 'Third todo',
-            done: false,
-            id: 3
-        }, {
-            name: 'Forth todo',
-            done: false,
-            id: 4
-        }
+        // {
+        //     name: 'First todo',
+        //     done: false,
+        //     id: 1,
+        //
+        // }, {
+        //     name: 'Second todo',
+        //     done: false,
+        //     id: 2
+        // }, {
+        //     name: 'Third todo',
+        //     done: false,
+        //     id: 3
+        // }, {
+        //     name: 'Forth todo',
+        //     done: false,
+        //     id: 4
+        // }
     ],
 };
 
 const todo = (state = initialState, action) => {
     switch (action.type) {
 
-        case 'TODO_ADD':
+        case 'GET_TODO':
             return {
                 ...state,
-                todos: [...state.todos, {name: action.payload, done: false, id: Math.random()}]
+                todos: action.payload
             };
+
+        // case 'TODO_ADD':
+        //     return {
+        //         ...state,
+        //         todos: [...state.todos, {name: action.payload, done: false, id: Math.random()}]
+        //     };
 
         case 'DELETE_TODO':
             return {
                 ...state,
-                todos:  [...state.todos.filter(el => el.id !== action.payload)]
+
             };
 
-        case 'EDIT_TODO':
-            return {
-                ...state,
-                todos: [...state.todos.map(el => {
-                    if (el.id === action.payload.todoId) {
-                        el.name = action.payload.name
-                    }
-                    return el
-                })]
-            }
+        // case 'EDIT_TODO':
+        //     return {
+        //         ...state,
+        //         todos: [...state.todos.map(el => {
+        //             if (el.id === action.payload.todoId) {
+        //                 el.name = action.payload.name
+        //             }
+        //             return el
+        //         })]
+        //     };
 
-        case 'MARK_AS_DONE':
-                return {
-                    ...state,
-                    todos: [...state.todos.map(el => {
-                        if (el.id === action.payload) {
-                            el.done = !el.done
-                        }
-                        return el
-                    })]
-                };
+        // case 'MARK_AS_DONE':
+        //         return {
+        //             ...state,
+        //             todos: [...state.todos.map(el => {
+        //                 if (el.id === action.payload) {
+        //                     el.done = !el.done
+        //                 }
+        //                 return el
+        //             })]
+        //         };
 
 
         case "MOVE_UP":
